@@ -1,0 +1,1302 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Seq.Extensions.Logging</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Extensions.Logging.SeqLoggerExtensions">
+            <summary>
+            Extends <see cref="T:Microsoft.Extensions.Logging.ILoggerFactory"/> with methods for configuring Seq logging.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Logging.SeqLoggerExtensions.AddSeq(Microsoft.Extensions.Logging.ILoggerFactory,Microsoft.Extensions.Configuration.IConfigurationSection)">
+            <summary>
+            Adds a Seq logger configured from the supplied configuration section.
+            </summary>
+            <param name="loggerFactory">The logger factory.</param>
+            <param name="configuration">A configuration section with details of the Seq server connection.</param>
+            <returns>A logger factory to allow further configuration.</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Logging.SeqLoggerExtensions.AddSeq(Microsoft.Extensions.Logging.ILoggerFactory,System.String,System.String,Microsoft.Extensions.Logging.LogLevel,System.Collections.Generic.IDictionary{System.String,Microsoft.Extensions.Logging.LogLevel})">
+            <summary>
+            Adds a Seq logger.
+            </summary>
+            <param name="loggerFactory">The logger factory.</param>
+            <param name="serverUrl">The Seq server URL; the default is http://localhost:5341.</param>
+            <param name="apiKey">A Seq API key to authenticate or tag messages from the logger.</param>
+            <param name="minimumLevel">The level below which events will be suppressed (the default is <see cref="F:Microsoft.Extensions.Logging.LogLevel.Information"/>).</param>
+            <param name="levelOverrides">A dictionary mapping logger name prefixes to minimum logging levels.</param>
+            <returns>A logger factory to allow further configuration.</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Logging.SeqLoggerExtensions.AddSeq(Microsoft.Extensions.Logging.ILoggingBuilder,System.String,System.String)">
+            <summary>
+            Adds a Seq logger.
+            </summary>
+            <param name="loggingBuilder">The logging builder.</param>
+            <param name="serverUrl">The Seq server URL; the default is http://localhost:5341.</param>
+            <param name="apiKey">A Seq API key to authenticate or tag messages from the logger.</param>
+            <returns>A logging builder to allow further configuration.</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Logging.SeqLoggerExtensions.AddSeq(Microsoft.Extensions.Logging.ILoggingBuilder,Microsoft.Extensions.Configuration.IConfigurationSection)">
+            <summary>
+            Adds a Seq logger configured from the supplied configuration section.
+            </summary>
+            <param name="loggingBuilder">The logging builder.</param>
+            <param name="configuration">A configuration section with details of the Seq server connection.</param>
+            <returns>A logging builder to allow further configuration.</returns>
+        </member>
+        <member name="T:Seq.Extensions.Logging.SelfLog">
+            <summary>
+            A simple source of information generated the logging provider,
+            for example when exceptions are thrown and caught internally.
+            </summary>
+        </member>
+        <member name="P:Seq.Extensions.Logging.SelfLog.Out">
+            <summary>
+            The output mechanism for self-log messages.
+            </summary>
+            <example>
+            SelfLog.Out = Console.Error;
+            </example>
+        </member>
+        <member name="M:Seq.Extensions.Logging.SelfLog.Enable(System.IO.TextWriter)">
+            <summary>
+            Set the output mechanism for self-log messages.
+            </summary>
+            <param name="output">A synchronized <see cref="T:System.IO.TextWriter"/> to which
+            self-log messages will be written.</param>
+        </member>
+        <member name="M:Seq.Extensions.Logging.SelfLog.Enable(System.Action{System.String})">
+            <summary>
+            Set the output mechanism for self-log messages.
+            </summary>
+            <param name="output">An action to invoke with self-log messages.</param>
+            // ReSharper disable once MemberCanBePrivate.Global
+        </member>
+        <member name="M:Seq.Extensions.Logging.SelfLog.Disable">
+            <summary>
+            Clear the output mechanism and disable self-log events.
+            </summary>
+            // ReSharper disable once MemberCanBePrivate.Global
+        </member>
+        <member name="M:Seq.Extensions.Logging.SelfLog.WriteLine(System.String,System.Object,System.Object,System.Object)">
+            <summary>
+            Write a message to the self-log.
+            </summary>
+            <param name="format">Standard .NET format string containing the message.</param>
+            <param name="arg0">First argument, if supplied.</param>
+            <param name="arg1">Second argument, if supplied.</param>
+            <param name="arg2">Third argument, if supplied.</param>
+            <remarks>
+            The name is historical; because this is used from third-party sink packages, removing the "Line"
+            suffix as would seem sensible isn't worth the breakage.
+            </remarks>
+        </member>
+        <member name="T:Serilog.Core.Constants">
+            <summary>
+            Constants used in the core logging pipeline and associated types.
+            </summary>
+        </member>
+        <member name="F:Serilog.Core.Constants.SourceContextPropertyName">
+            <summary>
+            The name of the property included in the emitted log events
+            when <code>ForContext&lt;T&gt;()</code> and overloads are
+            applied.
+            </summary>
+        </member>
+        <member name="T:Serilog.Core.Enrichers.PropertyEnricher">
+            <summary>
+            Adds a new property encricher to the log event.
+            </summary>
+        </member>
+        <member name="M:Serilog.Core.Enrichers.PropertyEnricher.#ctor(System.String,System.Object,System.Boolean)">
+            <summary>
+            Create a new property enricher.
+            </summary>
+            <param name="name">The name of the property.</param>
+            <param name="value">The value of the property.</param>
+            <returns>A handle to later remove the property from the context.</returns>
+            <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+            then the value will be converted to a structure; otherwise, unknown types will
+            be converted to scalars, which are generally stored as strings.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Serilog.Core.Enrichers.PropertyEnricher.Enrich(Serilog.Events.LogEvent,Serilog.Core.ILogEventPropertyFactory)">
+            <summary>
+            Enrich the log event.
+            </summary>
+            <param name="logEvent">The log event to enrich.</param>
+            <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
+        </member>
+        <member name="T:Serilog.Core.IDestructuringPolicy">
+            <summary>
+            Determine how, when destructuring, a supplied value is represented
+            as a complex log event property.
+            </summary>
+        </member>
+        <member name="M:Serilog.Core.IDestructuringPolicy.TryDestructure(System.Object,Serilog.Core.ILogEventPropertyValueFactory,Serilog.Events.LogEventPropertyValue@)">
+            <summary>
+            If supported, destructure the provided value.
+            </summary>
+            <param name="value">The value to destructure.</param>
+            <param name="propertyValueFactory">Recursively apply policies to destructure additional values.</param>
+            <param name="result">The destructured value, or null.</param>
+            <returns>True if the value could be destructured under this policy.</returns>
+        </member>
+        <member name="T:Serilog.Core.ILogEventEnricher">
+            <summary>
+            Applied during logging to add additional information to log events.
+            </summary>
+        </member>
+        <member name="M:Serilog.Core.ILogEventEnricher.Enrich(Serilog.Events.LogEvent,Serilog.Core.ILogEventPropertyFactory)">
+            <summary>
+            Enrich the log event.
+            </summary>
+            <param name="logEvent">The log event to enrich.</param>
+            <param name="propertyFactory">Factory for creating new properties to add to the event.</param>
+        </member>
+        <member name="T:Serilog.Core.ILogEventPropertyFactory">
+            <summary>
+            Creates log event properties from regular .NET objects, applying policies as
+            required.
+            </summary>
+        </member>
+        <member name="M:Serilog.Core.ILogEventPropertyFactory.CreateProperty(System.String,System.Object,System.Boolean)">
+            <summary>
+            Construct a <see cref="T:Serilog.Events.LogEventProperty"/> with the specified name and value.
+            </summary>
+            <param name="name">The name of the property.</param>
+            <param name="value">The value of the property.</param>
+            <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+            then the value will be converted to a structure; otherwise, unknown types will
+            be converted to scalars, which are generally stored as strings.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Serilog.Core.ILogEventPropertyValueFactory">
+            <summary>
+            Supports the policy-driven construction of <see cref="T:Serilog.Events.LogEventPropertyValue"/>s given
+            regular .NET objects.
+            </summary>
+        </member>
+        <member name="M:Serilog.Core.ILogEventPropertyValueFactory.CreatePropertyValue(System.Object,System.Boolean)">
+            <summary>
+            Create a <see cref="T:Serilog.Events.LogEventPropertyValue"/> given a .NET object and destructuring
+            strategy.
+            </summary>
+            <param name="value">The value of the property.</param>
+            <param name="destructureObjects">If true, and the value is a non-primitive, non-array type,
+            then the value will be converted to a structure; otherwise, unknown types will
+            be converted to scalars, which are generally stored as strings.</param>
+            <returns>The value.</returns>
+        </member>
+        <member name="T:Serilog.Core.ILogEventSink">
+            <summary>
+            A destination for log events.
+            </summary>
+        </member>
+        <member name="M:Serilog.Core.ILogEventSink.Emit(Serilog.Events.LogEvent)">
+            <summary>
+            Emit the provided log event to the sink.
+            </summary>
+            <param name="logEvent">The log event to write.</param>
+        </member>
+        <member name="T:Serilog.Core.IScalarConversionPolicy">
+            <summary>
+            Determine how a simple value is carried through the logging
+            pipeline as an immutable <see cref="T:Serilog.Events.ScalarValue"/>.
+            </summary>
+        </member>
+        <member name="M:Serilog.Core.IScalarConversionPolicy.TryConvertToScalar(System.Object,Serilog.Core.ILogEventPropertyValueFactory,Serilog.Events.ScalarValue@)">
+            <summary>
+            If supported, convert the provided value into an immutable scalar.
+            </summary>
+            <param name="value">The value to convert.</param>
+            <param name="propertyValueFactory">Recursively apply policies to convert additional values.</param>
+            <param name="result">The converted value, or null.</param>
+            <returns>True if the value could be converted under this policy.</returns>
+        </member>
+        <member name="T:Serilog.Core.Logger">
+            <summary>
+            The core Serilog logging pipeline. A <see cref="T:Serilog.Core.Logger"/> must
+            be disposed to flush any events buffered within it. Most application
+            code should depend on <see cref="T:Serilog.Core.Logger"/>, not this class.
+            </summary>
+        </member>
+        <member name="M:Serilog.Core.Logger.ForContext(Serilog.Core.ILogEventEnricher)">
+            <summary>
+            Create a logger that enriches log events via the provided enrichers.
+            </summary>
+            <param name="enricher">Enricher that applies in the context.</param>
+            <returns>A logger that will enrich log events as specified.</returns>
+        </member>
+        <member name="M:Serilog.Core.Logger.ForContext(System.Collections.Generic.IEnumerable{Serilog.Core.ILogEventEnricher})">
+            <summary>
+            Create a logger that enriches log events via the provided enrichers.
+            </summary>
+            <param name="enrichers">Enrichers that apply in the context.</param>
+            <returns>A logger that will enrich log events as specified.</returns>
+        </member>
+        <member name="M:Serilog.Core.Logger.ForContext(System.String,System.Object,System.Boolean)">
+            <summary>
+            Create a logger that enriches log events with the specified property.
+            </summary>
+            <param name="propertyName">The name of the property. Must be non-empty.</param>
+            <param name="value">The property value.</param>
+            <param name="destructureObjects">If true, the value will be serialized as a structured
+            object if possible; if false, the object will be recorded as a scalar or simple array.</param>
+            <returns>A logger that will enrich log events as specified.</returns>
+        </member>
+        <member name="M:Serilog.Core.Logger.ForContext(System.Type)">
+            <summary>
+            Create a logger that marks log events as being from the specified
+            source type.
+            </summary>
+            <param name="source">Type generating log messages in the context.</param>
+            <returns>A logger that will enrich log events as specified.</returns>
+        </member>
+        <member name="M:Serilog.Core.Logger.ForContext``1">
+            <summary>
+            Create a logger that marks log events as being from the specified
+            source type.
+            </summary>
+            <typeparam name="TSource">Type generating log messages in the context.</typeparam>
+            <returns>A logger that will enrich log events as specified.</returns>
+        </member>
+        <member name="M:Serilog.Core.Logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel)">
+            <summary>
+            Determine if events at the specified level will be passed through
+            to the log sinks.
+            </summary>
+            <param name="level">Level to check.</param>
+            <returns>True if the level is enabled; otherwise, false.</returns>
+        </member>
+        <member name="M:Serilog.Core.Logger.Write(Serilog.Events.LogEvent)">
+            <summary>
+            Write an event to the log.
+            </summary>
+            <param name="logEvent">The event to write.</param>
+        </member>
+        <member name="M:Serilog.Core.Logger.BindMessageTemplate(System.String,System.Object[],Serilog.Events.MessageTemplate@,System.Collections.Generic.IEnumerable{Serilog.Events.LogEventProperty}@)">
+            <summary>
+            Uses configured scalar conversion and destructuring rules to bind a set of properties to a
+            message template. Returns false if the template or values are invalid (<summary>Logger</summary>
+            methods never throw exceptions).
+            </summary>
+            <param name="messageTemplate">Message template describing an event.</param>
+            <param name="propertyValues">Objects positionally formatted into the message template.</param>
+            <param name="parsedTemplate">The internal representation of the template, which may be used to
+            render the <paramref name="boundProperties"/> as text.</param>
+            <param name="boundProperties">Captured properties from the template and <paramref name="propertyValues"/>.</param>
+            <example>
+            MessageTemplate template;
+            IEnumerable&lt;LogEventProperty&gt; properties>;
+            if (Log.BindMessageTemplate("Hello, {Name}!", new[] { "World" }, out template, out properties)
+            {
+                var propsByName = properties.ToDictionary(p => p.Name, p => p.Value);
+                Console.WriteLine(template.Render(propsByName, null));
+                // -> "Hello, World!"
+            }
+            </example>
+        </member>
+        <member name="M:Serilog.Core.Logger.BindProperty(System.String,System.Object,System.Boolean,Serilog.Events.LogEventProperty@)">
+            <summary>
+            Uses configured scalar conversion and destructuring rules to bind a property value to its captured
+            representation.
+            </summary>
+            <returns>True if the property could be bound, otherwise false (<summary>Logger</summary>
+            <param name="propertyName">The name of the property. Must be non-empty.</param>
+            <param name="value">The property value.</param>
+            <param name="destructureObjects">If true, the value will be serialized as a structured
+            object if possible; if false, the object will be recorded as a scalar or simple array.</param>
+            <param name="property">The resulting property.</param>
+            methods never throw exceptions).</returns>
+        </member>
+        <member name="M:Serilog.Core.Logger.Dispose">
+            <summary>
+            Close and flush the logging pipeline.
+            </summary>
+        </member>
+        <member name="T:Serilog.Core.LoggingLevelSwitch">
+            <summary>
+            Dynamically controls logging level.
+            </summary>
+        </member>
+        <member name="M:Serilog.Core.LoggingLevelSwitch.#ctor(Microsoft.Extensions.Logging.LogLevel)">
+            <summary>
+            Create a <see cref="T:Serilog.Core.LoggingLevelSwitch"/> at the initial
+            minimum level.
+            </summary>
+            <param name="initialMinimumLevel">The initial level to which the switch is set.</param>
+        </member>
+        <member name="P:Serilog.Core.LoggingLevelSwitch.MinimumLevel">
+            <summary>
+            The current minimum level, below which no events
+            should be generated.
+            </summary>
+        </member>
+        <member name="T:Serilog.Data.LogEventPropertyValueRewriter`1">
+            <summary>
+            A base class for visitors that rewrite the value with modifications. For example, implementations
+            might remove all structure properties with a certain name, apply size/length limits, or convert scalar properties of
+            one type into scalar properties of another.
+            </summary>
+            <typeparam name="TState"></typeparam>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueRewriter`1.VisitScalarValue(`0,Serilog.Events.ScalarValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.ScalarValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="scalar">The value to visit.</param>
+            <returns>The result of visiting <paramref name="scalar"/>.</returns>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueRewriter`1.VisitSequenceValue(`0,Serilog.Events.SequenceValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.SequenceValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="sequence">The value to visit.</param>
+            <returns>The result of visiting <paramref name="sequence"/>.</returns>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueRewriter`1.VisitStructureValue(`0,Serilog.Events.StructureValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.StructureValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="structure">The value to visit.</param>
+            <returns>The result of visiting <paramref name="structure"/>.</returns>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueRewriter`1.VisitDictionaryValue(`0,Serilog.Events.DictionaryValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.DictionaryValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="dictionary">The value to visit.</param>
+            <returns>The result of visiting <paramref name="dictionary"/>.</returns>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueRewriter`1.VisitUnsupportedValue(`0,Serilog.Events.LogEventPropertyValue)">
+            <summary>
+            Visit a value of an unsupported type. Returns the value unchanged.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="value">The value to visit.</param>
+            <returns>The result of visiting <paramref name="value"/>.</returns>
+        </member>
+        <member name="T:Serilog.Data.LogEventPropertyValueVisitor`2">
+            <summary>
+            An abstract base class for visitors that walk data in the
+            <see cref="T:Serilog.Events.LogEventPropertyValue"/> format. Subclasses, by
+            overriding appropriate methods, may search for, transform,
+            or print the value structures being visited.
+            </summary>
+            <remarks>
+            Stateless, designed to accommodate allocation-free visiting of multiple
+            values by the same visitor instance.
+            </remarks>
+            <typeparam name="TState">The type of a state object passed through
+            the visiting process.</typeparam>
+            <typeparam name="TResult">The type of the result generated by visiting
+            a node.</typeparam>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueVisitor`2.Visit(`0,Serilog.Events.LogEventPropertyValue)">
+            <summary>
+            Visit the root node type. This method delegates to
+            a concrete Visit*Value() method appropriate for the value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="value">The value to visit.</param>
+            <returns>The result of visiting <paramref name="value"/>.</returns>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueVisitor`2.VisitScalarValue(`0,Serilog.Events.ScalarValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.ScalarValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="scalar">The value to visit.</param>
+            <returns>The result of visiting <paramref name="scalar"/>.</returns>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueVisitor`2.VisitSequenceValue(`0,Serilog.Events.SequenceValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.SequenceValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="sequence">The value to visit.</param>
+            <returns>The result of visiting <paramref name="sequence"/>.</returns>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueVisitor`2.VisitStructureValue(`0,Serilog.Events.StructureValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.StructureValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="structure">The value to visit.</param>
+            <returns>The result of visiting <paramref name="structure"/>.</returns>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueVisitor`2.VisitDictionaryValue(`0,Serilog.Events.DictionaryValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.DictionaryValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="dictionary">The value to visit.</param>
+            <returns>The result of visiting <paramref name="dictionary"/>.</returns>
+        </member>
+        <member name="M:Serilog.Data.LogEventPropertyValueVisitor`2.VisitUnsupportedValue(`0,Serilog.Events.LogEventPropertyValue)">
+            <summary>
+            Visit a value of an unsupported type.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="value">The value to visit.</param>
+            <returns>The result of visiting <paramref name="value"/>.</returns>
+        </member>
+        <member name="T:Serilog.Events.DictionaryValue">
+            <summary>
+            A value represented as a mapping from keys to values.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.DictionaryValue.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{Serilog.Events.ScalarValue,Serilog.Events.LogEventPropertyValue}})">
+            <summary>
+            Create a <see cref="T:Serilog.Events.DictionaryValue"/> with the provided <paramref name="elements"/>.
+            </summary>
+            <param name="elements">The key-value mappings represented in the dictionary.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="P:Serilog.Events.DictionaryValue.Elements">
+            <summary>
+            The dictionary mapping.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.DictionaryValue.Render(System.IO.TextWriter,System.String,System.IFormatProvider)">
+            <summary>
+            Render the value to the output.
+            </summary>
+            <param name="output">The output.</param>
+            <param name="format">A format string applied to the value, or null.</param>
+            <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+            <seealso cref="M:Serilog.Events.LogEventPropertyValue.ToString(System.String,System.IFormatProvider)"/>.
+        </member>
+        <member name="T:Serilog.Events.LevelAlias">
+            <summary>
+            Descriptive aliases for <see cref="T:Microsoft.Extensions.Logging.LogLevel"/>.
+            </summary>
+            <remarks>These do not appear as members of the enumeration
+            as duplicated underlying values result in issues when presenting
+            enum values with <see cref="M:System.Object.ToString"/>.</remarks>
+        </member>
+        <member name="F:Serilog.Events.LevelAlias.Minimum">
+            <summary>
+            The least significant level of event.
+            </summary>
+        </member>
+        <member name="F:Serilog.Events.LevelAlias.Maximum">
+            <summary>
+            The most significant level of event.
+            </summary>
+        </member>
+        <member name="T:Serilog.Events.LogEvent">
+            <summary>
+            A log event.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.LogEvent.#ctor(System.DateTimeOffset,Microsoft.Extensions.Logging.LogLevel,System.Exception,Serilog.Events.MessageTemplate,System.Collections.Generic.IEnumerable{Serilog.Events.LogEventProperty})">
+            <summary>
+            Construct a new <seealso cref="T:Serilog.Events.LogEvent"/>.
+            </summary>
+            <param name="timestamp">The time at which the event occurred.</param>
+            <param name="level">The level of the event.</param>
+            <param name="exception">An exception associated with the event, or null.</param>
+            <param name="messageTemplate">The message template describing the event.</param>
+            <param name="properties">Properties associated with the event, including those presented in <paramref name="messageTemplate"/>.</param>
+        </member>
+        <member name="P:Serilog.Events.LogEvent.Timestamp">
+            <summary>
+            The time at which the event occurred.
+            </summary>
+        </member>
+        <member name="P:Serilog.Events.LogEvent.Level">
+            <summary>
+            The level of the event.
+            </summary>
+        </member>
+        <member name="P:Serilog.Events.LogEvent.MessageTemplate">
+            <summary>
+            The message template describing the event.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.LogEvent.RenderMessage(System.IO.TextWriter,System.IFormatProvider)">
+            <summary>
+            Render the message template to the specified output, given the properties associated
+            with the event.
+            </summary>
+            <param name="output">The output.</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        </member>
+        <member name="M:Serilog.Events.LogEvent.RenderMessage(System.IFormatProvider)">
+            <summary>
+            Render the message template given the properties associated
+            with the event, and return the result.
+            </summary>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        </member>
+        <member name="P:Serilog.Events.LogEvent.Properties">
+            <summary>
+            Properties associated with the event, including those presented in <see cref="P:Serilog.Events.LogEvent.MessageTemplate"/>.
+            </summary>
+        </member>
+        <member name="P:Serilog.Events.LogEvent.Exception">
+            <summary>
+            An exception associated with the event, or null.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.LogEvent.AddOrUpdateProperty(Serilog.Events.LogEventProperty)">
+            <summary>
+            Add a property to the event if not already present, otherwise, update its value.
+            </summary>
+            <param name="property">The property to add or update.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Serilog.Events.LogEvent.AddPropertyIfAbsent(Serilog.Events.LogEventProperty)">
+            <summary>
+            Add a property to the event if not already present.
+            </summary>
+            <param name="property">The property to add.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Serilog.Events.LogEvent.RemovePropertyIfPresent(System.String)">
+            <summary>
+            Remove a property from the event, if present. Otherwise no action
+            is performed.
+            </summary>
+            <param name="propertyName">The name of the property to remove.</param>
+        </member>
+        <member name="T:Serilog.Events.LogEventProperty">
+            <summary>
+            A property associated with a <see cref="T:Serilog.Events.LogEvent"/>.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.LogEventProperty.#ctor(System.String,Serilog.Events.LogEventPropertyValue)">
+            <summary>
+            Construct a <see cref="T:Serilog.Events.LogEventProperty"/> with the specified name and value.
+            </summary>
+            <param name="name">The name of the property.</param>
+            <param name="value">The value of the property.</param>
+            <exception cref="T:System.ArgumentException"></exception>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="P:Serilog.Events.LogEventProperty.Name">
+            <summary>
+            The name of the property.
+            </summary>
+        </member>
+        <member name="P:Serilog.Events.LogEventProperty.Value">
+            <summary>
+            The value of the property.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.LogEventProperty.IsValidName(System.String)">
+            <summary>
+            Test <paramref name="name" /> to determine if it is a valid property name.
+            </summary>
+            <param name="name">The name to check.</param>
+            <returns>True if the name is valid; otherwise, false.</returns>
+        </member>
+        <member name="T:Serilog.Events.LogEventPropertyValue">
+            <summary>
+            The value associated with a <see cref="T:Serilog.Events.LogEventProperty"/>. Divided into scalar,
+            sequence and structure values to direct serialization into various formats.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.LogEventPropertyValue.Render(System.IO.TextWriter,System.String,System.IFormatProvider)">
+            <summary>
+            Render the value to the output.
+            </summary>
+            <param name="output">The output.</param>
+            <param name="format">A format string applied to the value, or null.</param>
+            <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+            <seealso cref="M:Serilog.Events.LogEventPropertyValue.ToString(System.String,System.IFormatProvider)"/>.
+        </member>
+        <member name="M:Serilog.Events.LogEventPropertyValue.ToString">
+            <summary>
+            Returns a string that represents the current object.
+            </summary>
+            <returns>
+            A string that represents the current object.
+            </returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="M:Serilog.Events.LogEventPropertyValue.ToString(System.String,System.IFormatProvider)">
+            <summary>
+            Formats the value of the current instance using the specified format.
+            </summary>
+            <returns>
+            The value of the current instance in the specified format.
+            </returns>
+            <param name="format">The format to use.-or- A null reference (Nothing in Visual Basic) to use
+            the default format defined for the type of the <see cref="T:System.IFormattable"/> implementation. </param>
+            <param name="formatProvider">The provider to use to format the value.-or- A null reference
+            (Nothing in Visual Basic) to obtain the numeric format information from the current locale
+            setting of the operating system. </param><filterpriority>2</filterpriority>
+        </member>
+        <member name="T:Serilog.Events.MessageTemplate">
+            <summary>
+            Represents a message template passed to a log method. The template
+            can subsequently render the template in textual form given the list
+            of properties.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.MessageTemplate.#ctor(System.Collections.Generic.IEnumerable{Serilog.Parsing.MessageTemplateToken})">
+            <summary>
+            Construct a message template using manually-defined text and property tokens.
+            </summary>
+            <param name="tokens">The text and property tokens defining the template.</param>
+        </member>
+        <member name="M:Serilog.Events.MessageTemplate.#ctor(System.String,System.Collections.Generic.IEnumerable{Serilog.Parsing.MessageTemplateToken})">
+            <summary>
+            Construct a message template using manually-defined text and property tokens.
+            </summary>
+            <param name="text">The full text of the template; used by Serilog internally to avoid unneeded
+            string concatenation.</param>
+            <param name="tokens">The text and property tokens defining the template.</param>
+        </member>
+        <member name="M:Serilog.Events.MessageTemplate.GetElementsOfTypeToArray``1(System.Object[])">
+            <summary>
+            Similar to <see cref="M:System.Linq.Enumerable.OfType``1(System.Collections.IEnumerable)"/>, but faster.
+            </summary>
+        </member>
+        <member name="P:Serilog.Events.MessageTemplate.Text">
+            <summary>
+            The raw text describing the template.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.MessageTemplate.ToString">
+            <summary>
+            Render the template as a string.
+            </summary>
+            <returns>The string representation of the template.</returns>
+        </member>
+        <member name="P:Serilog.Events.MessageTemplate.Tokens">
+            <summary>
+            The tokens parsed from the template.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.MessageTemplate.Render(System.Collections.Generic.IReadOnlyDictionary{System.String,Serilog.Events.LogEventPropertyValue},System.IFormatProvider)">
+            <summary>
+            Convert the message template into a textual message, given the
+            properties matching the tokens in the message template.
+            </summary>
+            <param name="properties">Properties matching template tokens.</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+            <returns>The message created from the template and properties. If the
+            properties are mismatched with the template, the template will be
+            returned with incomplete substitution.</returns>
+        </member>
+        <member name="M:Serilog.Events.MessageTemplate.Render(System.Collections.Generic.IReadOnlyDictionary{System.String,Serilog.Events.LogEventPropertyValue},System.IO.TextWriter,System.IFormatProvider)">
+            <summary>
+            Convert the message template into a textual message, given the
+            properties matching the tokens in the message template.
+            </summary>
+            <param name="properties">Properties matching template tokens.</param>
+            <param name="output">The message created from the template and properties. If the
+            properties are mismatched with the template, the template will be
+            returned with incomplete substitution.</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        </member>
+        <member name="T:Serilog.Events.ScalarValue">
+            <summary>
+            A property value corresponding to a simple, scalar type.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.ScalarValue.#ctor(System.Object)">
+            <summary>
+            Construct a <see cref="T:Serilog.Events.ScalarValue"/> with the specified
+            value.
+            </summary>
+            <param name="value">The value, which may be <code>null</code>.</param>
+        </member>
+        <member name="P:Serilog.Events.ScalarValue.Value">
+            <summary>
+            The value, which may be <code>null</code>.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.ScalarValue.Render(System.IO.TextWriter,System.String,System.IFormatProvider)">
+            <summary>
+            Render the value to the output.
+            </summary>
+            <param name="output">The output.</param>
+            <param name="format">A format string applied to the value, or null.</param>
+            <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+            <seealso cref="M:Serilog.Events.LogEventPropertyValue.ToString(System.String,System.IFormatProvider)"/>.
+        </member>
+        <member name="M:Serilog.Events.ScalarValue.Equals(System.Object)">
+            <summary>
+            Determine if this instance is equal to <paramref name="obj"/>.
+            </summary>
+            <param name="obj">The instance to compare with.</param>
+            <returns>True if the instances are equal; otherwise, false.</returns>
+        </member>
+        <member name="M:Serilog.Events.ScalarValue.GetHashCode">
+            <summary>
+            Get a hash code representing the value.
+            </summary>
+            <returns>The instance's hash code.</returns>
+        </member>
+        <member name="T:Serilog.Events.SequenceValue">
+            <summary>
+            A value represented as an ordered sequence of values.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.SequenceValue.#ctor(System.Collections.Generic.IEnumerable{Serilog.Events.LogEventPropertyValue})">
+            <summary>
+            Create a <see cref="T:Serilog.Events.SequenceValue"/> with the provided <paramref name="elements"/>.
+            </summary>
+            <param name="elements">The elements of the sequence.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="P:Serilog.Events.SequenceValue.Elements">
+            <summary>
+            The elements of the sequence.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.SequenceValue.Render(System.IO.TextWriter,System.String,System.IFormatProvider)">
+            <summary>
+            Render the value to the output.
+            </summary>
+            <param name="output">The output.</param>
+            <param name="format">A format string applied to the value, or null.</param>
+            <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+            <seealso cref="M:Serilog.Events.LogEventPropertyValue.ToString(System.String,System.IFormatProvider)"/>.
+        </member>
+        <member name="T:Serilog.Events.StructureValue">
+            <summary>
+            A value represented as a collection of name-value properties.
+            </summary>
+        </member>
+        <member name="M:Serilog.Events.StructureValue.#ctor(System.Collections.Generic.IEnumerable{Serilog.Events.LogEventProperty},System.String)">
+            <summary>
+            Construct a <see cref="T:Serilog.Events.StructureValue"/> with the provided properties.
+            </summary>
+            <param name="typeTag">Optionally, a piece of metadata describing the "type" of the
+            structure.</param>
+            <param name="properties">The properties of the structure.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="P:Serilog.Events.StructureValue.TypeTag">
+            <summary>
+            A piece of metadata describing the "type" of the
+            structure, or null.
+            </summary>
+        </member>
+        <member name="P:Serilog.Events.StructureValue.Properties">
+            <summary>
+            The properties of the structure.
+            </summary>
+            <remarks>Not presented as a dictionary because dictionary construction is
+            relatively expensive; it is cheaper to build a dictionary over properties only
+            when the structure is of interest.</remarks>
+        </member>
+        <member name="M:Serilog.Events.StructureValue.Render(System.IO.TextWriter,System.String,System.IFormatProvider)">
+            <summary>
+            Render the value to the output.
+            </summary>
+            <param name="output">The output.</param>
+            <param name="format">A format string applied to the value, or null.</param>
+            <param name="formatProvider">A format provider to apply to the value, or null to use the default.</param>
+            <seealso cref="M:Serilog.Events.LogEventPropertyValue.ToString(System.String,System.IFormatProvider)"/>.
+        </member>
+        <member name="T:Serilog.Extensions.Logging.SerilogLoggerProvider">
+            <summary>
+            An <see cref="T:Microsoft.Extensions.Logging.ILoggerProvider"/> that pipes events through Serilog.
+            </summary>
+        </member>
+        <member name="M:Serilog.Extensions.Logging.SerilogLoggerProvider.#ctor(Serilog.Core.Logger)">
+            <summary>
+            Construct a <see cref="T:Serilog.Extensions.Logging.SerilogLoggerProvider"/>.
+            </summary>
+            <param name="logger">A Serilog logger to pipe events through.</param>
+        </member>
+        <member name="M:Serilog.Extensions.Logging.SerilogLoggerProvider.CreateLogger(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Serilog.Extensions.Logging.SerilogLoggerProvider.Enrich(Serilog.Events.LogEvent,Serilog.Core.ILogEventPropertyFactory)">
+            <inheritdoc />
+        </member>
+        <member name="M:Serilog.Extensions.Logging.SerilogLoggerProvider.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="M:Serilog.Formatting.Compact.CompactJsonFormatter.#ctor(Serilog.Formatting.Json.JsonValueFormatter)">
+            <summary>
+            Construct a <see cref="T:Serilog.Formatting.Compact.CompactJsonFormatter"/>, optionally supplying a formatter for
+            <see cref="T:Serilog.Events.LogEventPropertyValue"/>s on the event.
+            </summary>
+            <param name="valueFormatter">A value formatter, or null.</param>
+        </member>
+        <member name="M:Serilog.Formatting.Compact.CompactJsonFormatter.Format(Serilog.Events.LogEvent,System.IO.TextWriter)">
+            <summary>
+            Format the log event into the output. Subsequent events will be newline-delimited.
+            </summary>
+            <param name="logEvent">The event to format.</param>
+            <param name="output">The output.</param>
+        </member>
+        <member name="M:Serilog.Formatting.Compact.CompactJsonFormatter.FormatEvent(Serilog.Events.LogEvent,System.IO.TextWriter,Serilog.Formatting.Json.JsonValueFormatter)">
+            <summary>
+            Format the log event into the output.
+            </summary>
+            <param name="logEvent">The event to format.</param>
+            <param name="output">The output.</param>
+            <param name="valueFormatter">A value formatter for <see cref="T:Serilog.Events.LogEventPropertyValue"/>s on the event.</param>
+        </member>
+        <member name="M:Serilog.Formatting.Display.Padding.Apply(System.IO.TextWriter,System.String,System.Nullable{Serilog.Parsing.Alignment})">
+            <summary>
+            Writes the provided value to the output, applying direction-based padding when <paramref name="alignment"/> is provided.
+            </summary>
+        </member>
+        <member name="T:Serilog.Formatting.Json.JsonValueFormatter">
+            <summary>
+            Converts Serilog's structured property value format into JSON.
+            </summary>
+        </member>
+        <member name="M:Serilog.Formatting.Json.JsonValueFormatter.#ctor(System.String)">
+            <summary>
+            Construct a <see cref="T:Serilog.Formatting.Json.JsonValueFormatter"/>.
+            </summary>
+            <param name="typeTagName">When serializing structured (object) values,
+            the property name to use for the Serilog <see cref="P:Serilog.Events.StructureValue.TypeTag"/> field
+            in the resulting JSON. If null, no type tag field will be written. The default is
+            "_typeTag".</param>
+        </member>
+        <member name="M:Serilog.Formatting.Json.JsonValueFormatter.Format(Serilog.Events.LogEventPropertyValue,System.IO.TextWriter)">
+            <summary>
+            Format <paramref name="value"/> as JSON to <paramref name="output"/>.
+            </summary>
+            <param name="value">The value to format</param>
+            <param name="output">The output</param>
+        </member>
+        <member name="M:Serilog.Formatting.Json.JsonValueFormatter.VisitScalarValue(System.IO.TextWriter,Serilog.Events.ScalarValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.ScalarValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="scalar">The value to visit.</param>
+            <returns>The result of visiting <paramref name="scalar"/>.</returns>
+        </member>
+        <member name="M:Serilog.Formatting.Json.JsonValueFormatter.VisitSequenceValue(System.IO.TextWriter,Serilog.Events.SequenceValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.SequenceValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="sequence">The value to visit.</param>
+            <returns>The result of visiting <paramref name="sequence"/>.</returns>
+        </member>
+        <member name="M:Serilog.Formatting.Json.JsonValueFormatter.VisitStructureValue(System.IO.TextWriter,Serilog.Events.StructureValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.StructureValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="structure">The value to visit.</param>
+            <returns>The result of visiting <paramref name="structure"/>.</returns>
+        </member>
+        <member name="M:Serilog.Formatting.Json.JsonValueFormatter.VisitDictionaryValue(System.IO.TextWriter,Serilog.Events.DictionaryValue)">
+            <summary>
+            Visit a <see cref="T:Serilog.Events.DictionaryValue"/> value.
+            </summary>
+            <param name="state">Operation state.</param>
+            <param name="dictionary">The value to visit.</param>
+            <returns>The result of visiting <paramref name="dictionary"/>.</returns>
+        </member>
+        <member name="M:Serilog.Formatting.Json.JsonValueFormatter.FormatLiteralValue(System.Object,System.IO.TextWriter)">
+            <summary>
+            Write a literal as a single JSON value, e.g. as a number or string. Override to
+            support more value types. Don't write arrays/structures through this method - the
+            active destructuring policies have already indicated the value should be scalar at
+            this point.
+            </summary>
+            <param name="value">The value to write.</param>
+            <param name="output">The output</param>
+        </member>
+        <member name="M:Serilog.Formatting.Json.JsonValueFormatter.WriteQuotedJsonString(System.String,System.IO.TextWriter)">
+            <summary>
+            Write a valid JSON string literal, escaping as necessary.
+            </summary>
+            <param name="str">The string value to write.</param>
+            <param name="output">The output.</param>
+        </member>
+        <member name="M:Serilog.Parameters.PropertyBinder.ConstructProperties(Serilog.Events.MessageTemplate,System.Object[])">
+            <summary>
+            Create properties based on an ordered list of provided values.
+            </summary>
+            <param name="messageTemplate">The template that the parameters apply to.</param>
+            <param name="messageTemplateParameters">Objects corresponding to the properties
+            represented in the message template.</param>
+            <returns>A list of properties; if the template is malformed then
+            this will be empty.</returns>
+        </member>
+        <member name="T:Serilog.Parsing.Alignment">
+            <summary>
+            A structure representing the alignment settings to apply when rendering a property.
+            </summary>
+        </member>
+        <member name="M:Serilog.Parsing.Alignment.#ctor(Serilog.Parsing.AlignmentDirection,System.Int32)">
+            <summary>
+            Initializes a new instance of <see cref="T:Serilog.Parsing.Alignment"/>.
+            </summary>
+            <param name="direction">The text alignment direction.</param>
+            <param name="width">The width of the text, in characters.</param>
+        </member>
+        <member name="P:Serilog.Parsing.Alignment.Direction">
+            <summary>
+            The text alignment direction.
+            </summary>
+        </member>
+        <member name="P:Serilog.Parsing.Alignment.Width">
+            <summary>
+            The width of the text.
+            </summary>
+        </member>
+        <member name="T:Serilog.Parsing.AlignmentDirection">
+            <summary>
+            Defines the direction of the alignment.
+            </summary>
+        </member>
+        <member name="F:Serilog.Parsing.AlignmentDirection.Left">
+            <summary>
+            Text will be left-aligned.
+            </summary>
+        </member>
+        <member name="F:Serilog.Parsing.AlignmentDirection.Right">
+            <summary>
+            Text will be right-aligned.
+            </summary>
+        </member>
+        <member name="T:Serilog.Parsing.Destructuring">
+            <summary>
+            Instructs the logger on how to store information about provided
+            parameters.
+            </summary>
+        </member>
+        <member name="F:Serilog.Parsing.Destructuring.Default">
+            <summary>
+            Convert known types and objects to scalars, arrays to sequences.
+            </summary>
+        </member>
+        <member name="F:Serilog.Parsing.Destructuring.Stringify">
+            <summary>
+            Convert all types to scalar strings. Prefix name with '$'.
+            </summary>
+        </member>
+        <member name="F:Serilog.Parsing.Destructuring.Destructure">
+            <summary>
+            Convert known types to scalars, destructure objects and collections
+            into sequences and structures. Prefix name with '@'.
+            </summary>
+        </member>
+        <member name="T:Serilog.Parsing.MessageTemplateParser">
+            <summary>
+            Parses message template strings into sequences of text or property
+            tokens.
+            </summary>
+        </member>
+        <member name="M:Serilog.Parsing.MessageTemplateParser.Parse(System.String)">
+            <summary>
+            Parse the supplied message template.
+            </summary>
+            <param name="messageTemplate">The message template to parse.</param>
+            <returns>A sequence of text or property tokens. Where the template
+            is not syntactically valid, text tokens will be returned. The parser
+            will make a best effort to extract valid property tokens even in the
+            presence of parsing issues.</returns>
+        </member>
+        <member name="T:Serilog.Parsing.MessageTemplateToken">
+            <summary>
+            An element parsed from a message template string.
+            </summary>
+        </member>
+        <member name="M:Serilog.Parsing.MessageTemplateToken.#ctor(System.Int32)">
+            <summary>
+            Construct a <see cref="T:Serilog.Parsing.MessageTemplateToken"/>.
+            </summary>
+            <param name="startIndex">The token's start index in the template.</param>
+        </member>
+        <member name="P:Serilog.Parsing.MessageTemplateToken.StartIndex">
+            <summary>
+            The token's start index in the template.
+            </summary>
+        </member>
+        <member name="P:Serilog.Parsing.MessageTemplateToken.Length">
+            <summary>
+            The token's length.
+            </summary>
+        </member>
+        <member name="M:Serilog.Parsing.MessageTemplateToken.Render(System.Collections.Generic.IReadOnlyDictionary{System.String,Serilog.Events.LogEventPropertyValue},System.IO.TextWriter,System.IFormatProvider)">
+            <summary>
+            Render the token to the output.
+            </summary>
+            <param name="properties">Properties that may be represented by the token.</param>
+            <param name="output">Output for the rendered string.</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        </member>
+        <member name="T:Serilog.Parsing.PropertyToken">
+            <summary>
+            A message template token representing a log event property.
+            </summary>
+        </member>
+        <member name="M:Serilog.Parsing.PropertyToken.#ctor(System.String,System.String,System.String,Serilog.Parsing.Destructuring)">
+            <summary>
+            Construct a <see cref="T:Serilog.Parsing.PropertyToken"/>.
+            </summary>
+            <param name="propertyName">The name of the property.</param>
+            <param name="rawText">The token as it appears in the message template.</param>
+            <param name="formatObsolete">The format applied to the property, if any.</param>
+            <param name="destructuringObsolete">The destructuring strategy applied to the property, if any.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Serilog.Parsing.PropertyToken.#ctor(System.String,System.String,System.String,System.Nullable{Serilog.Parsing.Alignment},Serilog.Parsing.Destructuring,System.Int32)">
+            <summary>
+            Construct a <see cref="T:Serilog.Parsing.PropertyToken"/>.
+            </summary>
+            <param name="propertyName">The name of the property.</param>
+            <param name="rawText">The token as it appears in the message template.</param>
+            <param name="format">The format applied to the property, if any.</param>
+            <param name="alignment">The alignment applied to the property, if any.</param>
+            <param name="destructuring">The destructuring strategy applied to the property, if any.</param>
+            <param name="startIndex">The token's start index in the template.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="P:Serilog.Parsing.PropertyToken.Length">
+            <summary>
+            The token's length.
+            </summary>
+        </member>
+        <member name="M:Serilog.Parsing.PropertyToken.Render(System.Collections.Generic.IReadOnlyDictionary{System.String,Serilog.Events.LogEventPropertyValue},System.IO.TextWriter,System.IFormatProvider)">
+            <summary>
+            Render the token to the output.
+            </summary>
+            <param name="properties">Properties that may be represented by the token.</param>
+            <param name="output">Output for the rendered string.</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        </member>
+        <member name="P:Serilog.Parsing.PropertyToken.PropertyName">
+            <summary>
+            The property name.
+            </summary>
+        </member>
+        <member name="P:Serilog.Parsing.PropertyToken.Destructuring">
+            <summary>
+            Destructuring strategy applied to the property.
+            </summary>
+        </member>
+        <member name="P:Serilog.Parsing.PropertyToken.Format">
+            <summary>
+            Format applied to the property.
+            </summary>
+        </member>
+        <member name="P:Serilog.Parsing.PropertyToken.Alignment">
+            <summary>
+            Alignment applied to the property.
+            </summary>
+        </member>
+        <member name="P:Serilog.Parsing.PropertyToken.IsPositional">
+            <summary>
+            True if the property name is a positional index; otherwise, false.
+            </summary>
+        </member>
+        <member name="M:Serilog.Parsing.PropertyToken.TryGetPositionalValue(System.Int32@)">
+            <summary>
+            Try to get the integer value represented by the property name.
+            </summary>
+            <param name="position">The integer value, if present.</param>
+            <returns>True if the property is positional, otherwise false.</returns>
+        </member>
+        <member name="M:Serilog.Parsing.PropertyToken.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            true if the specified object  is equal to the current object; otherwise, false.
+            </returns>
+            <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
+        </member>
+        <member name="M:Serilog.Parsing.PropertyToken.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns>
+            A hash code for the current <see cref="T:System.Object"/>.
+            </returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="M:Serilog.Parsing.PropertyToken.ToString">
+            <summary>
+            Returns a string that represents the current object.
+            </summary>
+            <returns>
+            A string that represents the current object.
+            </returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="T:Serilog.Parsing.TextToken">
+            <summary>
+            A message template token representing literal text.
+            </summary>
+        </member>
+        <member name="M:Serilog.Parsing.TextToken.#ctor(System.String,System.Int32)">
+            <summary>
+            Construct a <see cref="T:Serilog.Parsing.TextToken"/>.
+            </summary>
+            <param name="text">The text of the token.</param>
+            <param name="startIndex">The token's start index in the template.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="P:Serilog.Parsing.TextToken.Length">
+            <summary>
+            The token's length.
+            </summary>
+        </member>
+        <member name="M:Serilog.Parsing.TextToken.Render(System.Collections.Generic.IReadOnlyDictionary{System.String,Serilog.Events.LogEventPropertyValue},System.IO.TextWriter,System.IFormatProvider)">
+            <summary>
+            Render the token to the output.
+            </summary>
+            <param name="properties">Properties that may be represented by the token.</param>
+            <param name="output">Output for the rendered string.</param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        </member>
+        <member name="M:Serilog.Parsing.TextToken.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            true if the specified object  is equal to the current object; otherwise, false.
+            </returns>
+            <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
+        </member>
+        <member name="M:Serilog.Parsing.TextToken.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns>
+            A hash code for the current <see cref="T:System.Object"/>.
+            </returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="M:Serilog.Parsing.TextToken.ToString">
+            <summary>
+            Returns a string that represents the current object.
+            </summary>
+            <returns>
+            A string that represents the current object.
+            </returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="P:Serilog.Parsing.TextToken.Text">
+            <summary>
+            The text of the token.
+            </summary>
+        </member>
+        <member name="T:Serilog.Sinks.PeriodicBatching.BatchedConnectionStatus">
+            <summary>
+            Manages reconnection period and transient fault response for <see cref="T:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink"/>.
+            During normal operation an object of this type will simply echo the configured batch transmission
+            period. When availabilty fluctuates, the class tracks the number of failed attempts, each time
+            increasing the interval before reconnection is attempted (up to a set maximum) and at predefined
+            points indicating that either the current batch, or entire waiting queue, should be dropped. This
+            Serves two purposes - first, a loaded receiver may need a temporary reduction in traffic while coming
+            back online. Second, the sender needs to account for both bad batches (the first fault response) and
+            also overproduction (the second, queue-dropping response). In combination these should provide a
+            reasonable delivery effort but ultimately protect the sender from memory exhaustion.
+            </summary>
+            <remarks>
+            Currently used only by <see cref="T:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink"/>, but may
+            provide the basis for a "smart" exponential backoff timer. There are other factors to consider
+            including the desire to send batches "when full" rather than continuing to buffer, and so-on.
+            </remarks>
+        </member>
+        <member name="T:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink">
+            <summary>
+            Base class for sinks that log events in batches. Batching is
+            triggered asynchronously on a timer.
+            </summary>
+            <remarks>
+            To avoid unbounded memory growth, events are discarded after attempting
+            to send a batch, regardless of whether the batch succeeded or not. Implementers
+            that want to change this behavior need to either implement from scratch, or
+            embed retry logic in the batch emitting functions.
+            </remarks>
+        </member>
+        <member name="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.#ctor(System.Int32,System.TimeSpan)">
+            <summary>
+            Construct a sink posting to the specified database.
+            </summary>
+            <param name="batchSizeLimit">The maximum number of events to include in a single batch.</param>
+            <param name="period">The time to wait between checking for event batches.</param>
+        </member>
+        <member name="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.#ctor(System.Int32,System.TimeSpan,System.Int32)">
+            <summary>
+            Construct a sink posting to the specified database.
+            </summary>
+            <param name="batchSizeLimit">The maximum number of events to include in a single batch.</param>
+            <param name="period">The time to wait between checking for event batches.</param>
+            <param name="queueLimit">Maximum number of events in the queue.</param>
+        </member>
+        <member name="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.Dispose(System.Boolean)">
+            <summary>
+            Free resources held by the sink.
+            </summary>
+            <param name="disposing">If true, called because the object is being disposed; if false,
+            the object is being disposed from the finalizer.</param>
+        </member>
+        <member name="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatch(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})">
+            <summary>
+            Emit a batch of log events, running to completion synchronously.
+            </summary>
+            <param name="events">The events to emit.</param>
+            <remarks>Override either <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatch(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})"/> or <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatchAsync(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})"/>,
+            not both.</remarks>
+        </member>
+        <member name="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatchAsync(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})">
+            <summary>
+            Emit a batch of log events, running asynchronously.
+            </summary>
+            <param name="events">The events to emit.</param>
+            <remarks>Override either <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatch(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})"/> or <see cref="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.EmitBatchAsync(System.Collections.Generic.IEnumerable{Serilog.Events.LogEvent})"/>,
+            not both. Overriding EmitBatch() is preferred.</remarks>
+        </member>
+        <member name="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.Emit(Serilog.Events.LogEvent)">
+            <summary>
+            Emit the provided log event to the sink. If the sink is being disposed or
+            the app domain unloaded, then the event is ignored.
+            </summary>
+            <param name="logEvent">Log event to emit.</param>
+            <exception cref="T:System.ArgumentNullException">The event is null.</exception>
+            <remarks>
+            The sink implements the contract that any events whose Emit() method has
+            completed at the time of sink disposal will be flushed (or attempted to,
+            depending on app domain state).
+            </remarks>
+        </member>
+        <member name="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.CanInclude(Serilog.Events.LogEvent)">
+            <summary>
+            Determine whether a queued log event should be included in the batch. If
+            an override returns false, the event will be dropped.
+            </summary>
+            <param name="evt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink.OnEmptyBatch">
+            <summary>
+            Allows derived sinks to perform periodic work without requiring additional threads
+            or timers (thus avoiding additional flush/shut-down complexity).
+            </summary>
+        </member>
+        <member name="T:Serilog.Sinks.Seq.ControlledLevelSwitch">
+            <summary>
+            Instances of this type are single-threaded, generally only updated on a background
+            timer thread. An exception is <see cref="M:Serilog.Sinks.Seq.ControlledLevelSwitch.IsIncluded(Serilog.Events.LogEvent)"/>, which may be called
+            concurrently but performs no synchronization.
+            </summary>
+        </member>
+    </members>
+</doc>
